@@ -18,8 +18,8 @@ describe('Summerizer Tests', () => {
     const summerizer = new Summerizer(options);
     const result = summerizer.execute();
     console.log('SUM Result:', result);
-    expect(result.find(r => r.key === 'S1').value.Price).toBe(30);
-    expect(result.find(r => r.key === 'S2').value.Price).toBe(30);
+    expect(result.find(r => r.key === 'S1')?.value?.Price).toBe(30);
+    expect(result.find(r => r.key === 'S2')?.value?.Price).toBe(30);
   });
 
   test('COUNT aggregation', () => {
@@ -31,8 +31,8 @@ describe('Summerizer Tests', () => {
     const summerizer = new Summerizer(options);
     const result = summerizer.execute();
     console.log('COUNT Result:', result);
-    expect(result.find(r => r.key === 'S1').value.count).toBe(2);
-    expect(result.find(r => r.key === 'S2').value.count).toBe(1);
+    expect(result.find(r => r.key === 'S1')?.value?.count).toBe(2);
+    expect(result.find(r => r.key === 'S2')?.value?.count).toBe(1);
   });
 
   // 다른 집계 유형에 대한 테스트 추가

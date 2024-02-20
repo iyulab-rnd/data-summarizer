@@ -45,6 +45,8 @@ class Summerizer {
   
   private select(groupedData: linq.IEnumerable<linq.IGrouping<string, DataItem>>): ExecutionResult[] {
     const { fields } = this.options;
+    let stdResult: MathNumericType[] | MathNumericType | number;
+    let varianceResult: MathNumericType[] | MathNumericType | number;
     
     return groupedData
       .select(group => {
@@ -83,12 +85,12 @@ class Summerizer {
               break;
             // 표준편차
             case 'STD':
-              const stdResult = math.std(fieldData);
+              stdResult = math.std(fieldData);
               aggregatedData[field.field] = typeof stdResult === 'number' ? stdResult : NaN;
               break;
             // 분산
             case 'VARIANCE':
-              const varianceResult = math.variance(fieldData);
+              varianceResult = math.variance(fieldData);
               aggregatedData[field.field] = typeof varianceResult === 'number' ? varianceResult : NaN;
               break;
           }
