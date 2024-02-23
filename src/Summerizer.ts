@@ -1,6 +1,7 @@
 import { List } from 'immutable';
 import linq from 'linq';
-import math, { MathNumericType } from 'mathjs';
+import * as math from 'mathjs'; // mathjs 전체를 임포트
+import { MathNumericType } from 'mathjs';
 
 interface DataItem {
   [key: string]: string | MathNumericType;
