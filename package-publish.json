@@ -1,5 +1,5 @@
 {
-  "main": "index.cjs.js",
-  "module": "index.esm.js",
-  "types": "index.d.ts"
+  "main": "bundle.js",
+  "module": "bundle.js",
+  "types": "src/index.d.ts"
 }

@@ -1,3 +1,4 @@
+// .eslintrc
 {
   "parser": "@typescript-eslint/parser",
   "extends": [
@@ -8,6 +9,5 @@
     "sourceType": "module"
   },
   "rules": {
-    // 여기에 사용자 지정 규칙 추가
   }
 }

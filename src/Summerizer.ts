@@ -1,3 +1,4 @@
+// src/Summerizer.ts
 import { List } from 'immutable';
 import linq from 'linq';
 import * as math from 'mathjs'; // mathjs 전체를 임포트
@@ -11,8 +12,13 @@ interface SummarizerOptions {
   data: DataItem[];
   groupby: string[];
   fields: {
-    type: 'SUM' | 'COUNT' | 'AVG' | 'MEAN' | 'MEDIAN' | 'MIN' | 'MAX' | 'STD' | 'VARIANCE';
+    aggregation: 'SUM' | 'COUNT' | 'AVG' | 'MEAN' | 'MEDIAN' | 'MIN' | 'MAX' | 'STD' | 'VARIANCE';
     field: string;
+  }[];
+  filters?: {
+    field: string;
+    condition: 'EQUAL' | 'NOT_EQUAL' | 'GREATER_THAN' | 'LESS_THAN' | 'GREATER_THAN_OR_EQUAL' | 'LESS_THAN_OR_EQUAL';
+    value: string | number;
   }[];
 }
 
@@ -35,7 +41,11 @@ class Summerizer {
   public execute(): ExecutionResult[] {
     const { data, groupby } = this.options;
     const immutableData = List(data);
-    const groupedData = this.groupBy(immutableData, groupby);
+
+    // 필터링 적용
+    const filteredData = this.applyFilters(immutableData);
+    
+    const groupedData = this.groupBy(filteredData, groupby);
     return this.select(groupedData);
   }
 
@@ -46,8 +56,6 @@ class Summerizer {
   
   private select(groupedData: linq.IEnumerable<linq.IGrouping<string, DataItem>>): ExecutionResult[] {
     const { fields } = this.options;
-    let stdResult: MathNumericType[] | MathNumericType | number;
-    let varianceResult: MathNumericType[] | MathNumericType | number;
     
     return groupedData
       .select(group => {
@@ -58,7 +66,7 @@ class Summerizer {
             return parseFloat(typeof value === 'string' ? value : value.toString());
           });
 
-          switch (field.type) {
+          switch (field.aggregation) {
             // 합계
             case 'SUM':
               aggregatedData[field.field] = math.sum(fieldData);
@@ -86,13 +94,13 @@ class Summerizer {
               break;
             // 표준편차
             case 'STD':
-              stdResult = math.std(fieldData);
-              aggregatedData[field.field] = typeof stdResult === 'number' ? stdResult : NaN;
+              const stdResult = math.std(fieldData) as unknown as number;
+              aggregatedData[field.field] = !isNaN(stdResult) ? stdResult : NaN;
               break;
             // 분산
             case 'VARIANCE':
-              varianceResult = math.variance(fieldData);
-              aggregatedData[field.field] = typeof varianceResult === 'number' ? varianceResult : NaN;
+              const varianceResult = math.variance(fieldData) as unknown as number;
+              aggregatedData[field.field] = !isNaN(varianceResult) ? varianceResult : NaN;
               break;
           }
         });
@@ -100,6 +108,33 @@ class Summerizer {
       })
       .toArray();
   }  
+
+  private applyFilters(data: List<DataItem>): List<DataItem> {
+    let filteredData = data;
+    if (this.options.filters) {
+      this.options.filters.forEach(filter => {
+        filteredData = filteredData.filter(item => {
+          switch (filter.condition) {
+            case 'EQUAL':
+              return item[filter.field] === filter.value;
+            case 'NOT_EQUAL':
+              return item[filter.field] !== filter.value;
+            case 'GREATER_THAN':
+              return parseFloat(item[filter.field] as string) > parseFloat(filter.value as string);
+            case 'LESS_THAN':
+              return parseFloat(item[filter.field] as string) < parseFloat(filter.value as string);
+            case 'GREATER_THAN_OR_EQUAL':
+              return parseFloat(item[filter.field] as string) >= parseFloat(filter.value as string);
+            case 'LESS_THAN_OR_EQUAL':
+              return parseFloat(item[filter.field] as string) <= parseFloat(filter.value as string);
+            default:
+              return true;
+          }
+        });
+      });
+    }
+    return filteredData;
+  }
 }
 
 export { Summerizer, SummarizerOptions };
