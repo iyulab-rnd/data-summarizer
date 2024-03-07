@@ -1,7 +1,7 @@
 {
   "name": "@iyulab/data-summerizer",
-  "version": "0.0.4",
-  "description": "Summarize the data.",
+  "version": "0.0.5",
+  "description": "A data aggregation library that mimics the mongodb pipeline syntax.",
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "type": "module",

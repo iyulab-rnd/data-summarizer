@@ -1,2 +1,2 @@
 // src/index.ts
-export * from './Summerizer'
+export * from "./Aggregation";
