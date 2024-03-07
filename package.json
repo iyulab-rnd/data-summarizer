@@ -1,7 +1,17 @@
 {
-  "name": "@iyulab/data-summerizer",
-  "version": "0.0.5",
-  "description": "A data aggregation library that mimics the mongodb pipeline syntax.",
+  "name": "@iyulab/data-summarizer",
+  "version": "0.1.0",
+  "description": "A json collection pipeline library that mimics the MongoDB pipeline syntax.",
+  "author": {
+    "name": "iyulab",
+    "url": "https://www.iyulab.com"
+  },
+  "homepage": "https://www.iyulab.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iyulab-rnd/data-summarizer"
+  },  
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "type": "module",
@@ -11,8 +21,6 @@
     "build": "iyulab build -d dist -b rollup",
     "deploy": "iyulab publish -p"
   },
-  "author": "iyulab",
-  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.24.0",
     "@babel/preset-env": "^7.24.0",

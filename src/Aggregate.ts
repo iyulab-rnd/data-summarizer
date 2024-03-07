@@ -1,11 +1,12 @@
-// src/Aggregation.ts
-// mongodb 의 집계 문법을 모방한 구현입니다.
+// src/Aggregate.ts
+// mongodb 의 db.collection.aggregate({?}) 문법을 모방한 구현입니다.
+import { compare, compareValues, matchFilter } from "./Functions";
 import * as math from "mathjs";
 // import { List } from "immutable";
 // import linq from "linq";
 // import { MathNumericType } from "mathjs";
 
-export interface AggregationOptions {
+export interface AggregateOptions {
   $match?: any;
   $group?: { [key: string]: any };
   $sort?: { [key: string]: 1 | -1 };
@@ -13,7 +14,7 @@ export interface AggregationOptions {
 }
 
 // MongoDB 집계를 실행하는 함수
-export function aggregation(data: any[], options: AggregationOptions): any[] {
+export function aggregate(data: any[], options: AggregateOptions): any[] {
   let result = data;
 
   if (options.$match) {
@@ -33,20 +34,6 @@ export function aggregation(data: any[], options: AggregationOptions): any[] {
   }
 
   return result;
-}
-
-// $match 연산자에 해당하는 필터링 작업을 수행하는 함수
-function matchFilter(item: any, match: any): boolean {
-  return Object.keys(match).every((key) => {
-    const matchValue = match[key];
-    // MongoDB의 비교 연산자를 처리
-    if (typeof matchValue === "object") {
-      const operator = Object.keys(matchValue)[0];
-      const value = matchValue[operator];
-      return compareValues(item[key], value, operator);
-    }
-    return item[key] === matchValue;
-  });
 }
 
 // $group 연산자에 해당하는 그룹화 및 집계 작업을 수행하는 함수
@@ -200,33 +187,4 @@ function finalizeAggregationResult(aggregationResult: any, group: any): void {
       // 다른 집계 연산 처리...
     }
   });
-}
-
-// $sort 연산자에 해당하는 정렬 작업을 수행하는 함수
-function compare(a: any, b: any, sort: any): number {
-  for (const key in sort) {
-    if (a[key] < b[key]) return -1;
-    if (a[key] > b[key]) return 1;
-  }
-  return 0;
-}
-
-// 값을 비교하는 함수
-function compareValues(value1: any, value2: any, operator: string): boolean {
-  switch (operator) {
-    case "$eq":
-      return value1 === value2;
-    case "$gt":
-      return value1 > value2;
-    case "$gte":
-      return value1 >= value2;
-    case "$lt":
-      return value1 < value2;
-    case "$lte":
-      return value1 <= value2;
-    case "$ne":
-      return value1 !== value2;
-    default:
-      throw new Error(`Unsupported operator: ${operator}`);
-  }
 }

@@ -1,30 +1,38 @@
-# data-summarizer
+# json-collection
 
-This library provides a simplified simulation of MongoDB's aggregation framework in TypeScript. It allows for filtering, grouping, sorting, and limiting of in-memory data collections, mimicking the behavior of database operations but in a lightweight, local context.
+This library provides a simplified simulation of MongoDB's aggregation and query framework in TypeScript. It enables filtering, grouping, sorting, and limiting of in-memory data collections, mimicking the behavior of MongoDB database operations but in a lightweight, local context.
 
 ## Installation
 
-To use the Data Aggregator library in your project, you can install it via npm. Run the following command in your project directory:
+To use the Json Collection library in your project, install it via npm. Execute the following command in your project directory:
 
 ```bash
-npm install @iyulab/data-summerizer
+npm install @iyulab/json-collection
 ```
 
 Make sure you have Node.js and npm installed on your system. You can download and install Node.js (npm included) from https://nodejs.org/.
 
 ## Features
 
-The Data Aggregator library provides the following features:
+The Json Collecgtion library provides the following features:
 
-Filtering ($match): Filter your data based on specified criteria.
-Grouping and Aggregation ($group): Group your data by specific fields and count the number of documents in each group.
-Sorting ($sort): Sort your data based on one or more fields.
-Limiting ($limit): Limit the number of documents to return.
-Usage
-Below is a simple example demonstrating how to use the Aggregation class to perform data operations:
+- Filtering ($match): Filter your data based on specified criteria.
+- Grouping and Aggregation ($group): Group your data by specific fields and perform various aggregation operations like counting, summing, averaging, etc.
+- Sorting ($sort): Sort your data based on one or more fields.
+- Limiting ($limit): Limit the number of documents to return.
+- Finding ($find): Retrieve documents from your data based on filtering, sorting, and limiting criteria, simulating the MongoDB find operation.
+
+## Usage
+
+Below is a simple example demonstrating how to use the Json Collection library to perform data operations:
 
 ```typescript
-import { aggregation, AggregationOptions } from "@iyulab/data-summerizer";
+import {
+  aggregate,
+  find,
+  AggregationOptions,
+  FindOptions,
+} from "@iyulab/json-collection";
 
 // Sample data
 const data = [
@@ -34,22 +42,32 @@ const data = [
   { id: 4, name: "David", age: 40 },
 ];
 
-// Create an instance of Aggregation with options
-const options: AggregationOptions = {
+// Aggregation example
+const aggOptions: AggregationOptions = {
   $match: { age: { $gt: 30 } }, // Filtering: age greater than 30
   $group: { _id: "$age" }, // Grouping by age
   $sort: { age: 1 }, // Sorting by age in ascending order
   $limit: 2, // Limiting to 2 documents
 };
 
-// Execute the aggregation
-const result = aggregation(data, options);
+const aggResult = aggregate(data, aggOptions);
+console.log(aggResult);
 
-console.log(result);
+// Find example
+const findOptions: FindOptions = {
+  $match: { name: { $eq: "Alice" } }, // Filtering: name equals Alice
+  $sort: { age: -1 }, // Sorting by age in descending order
+  $limit: 1, // Limiting to 1 document
+};
+
+const findResult = find(data, findOptions);
+console.log(findResult);
 ```
 
 This will output the processed data based on the provided aggregation options.
-See [Aggregation Tests](./tests/Aggregation.test.ts)
+
+- See [Find Tests](./tests/Find.test.ts)
+- See [Aggregate Tests](./tests/Aggregate.test.ts)
 
 ## Contribution
 
